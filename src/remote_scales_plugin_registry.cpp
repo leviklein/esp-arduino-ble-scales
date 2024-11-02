@@ -7,6 +7,7 @@ RemoteScalesPluginRegistry* RemoteScalesPluginRegistry::instance = nullptr;
 
 void RemoteScalesPluginRegistry::registerPlugin(RemoteScalesPlugin plugin) {
   // Check if a plugin with the same ID already exists
+  Serial.println("registering plugin..");
   for (const auto& existingPlugin : plugins) {
     if (existingPlugin.id == plugin.id) {
       return;
@@ -14,6 +15,7 @@ void RemoteScalesPluginRegistry::registerPlugin(RemoteScalesPlugin plugin) {
   }
 
   plugins.push_back(plugin);
+  Serial.println("plugin registration successful!");
 }
 
 bool RemoteScalesPluginRegistry::containsPluginForDevice(const DiscoveredDevice& device) {
@@ -33,4 +35,3 @@ std::unique_ptr<RemoteScales> RemoteScalesPluginRegistry::initialiseRemoteScales
   }
   return nullptr;
 }
-

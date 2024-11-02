@@ -9,7 +9,7 @@ RemoteScales::RemoteScales(const DiscoveredDevice& device) : device(device) {}
 
 void RemoteScales::log(std::string msgFormat, ...) {
   if (!this->logCallback) return;
-  
+
   va_list args;
   va_start(args, msgFormat);
   int length = vsnprintf(nullptr, 0, msgFormat.c_str(), args); // Find length of string
@@ -87,7 +87,7 @@ std::string RemoteScales::byteArrayToHexString(const uint8_t* byteArray, size_t 
 void RemoteScalesScanner::initializeAsyncScan() {
   if (isRunning) return;
   cleanupDiscoveredScales();
-
+  Serial.println("START SCAN");
   // We set the second parameter to true to prevent the library from storing BLEAdvertisedDevice objects
   // for devices we're not interested in. This is important because the library will otherwise run out of
   // memory after a while.
@@ -115,7 +115,9 @@ void RemoteScalesScanner::restartAsyncScan() {
 }
 
 void RemoteScalesScanner::onResult(NimBLEAdvertisedDevice* advertisedDevice) {
+  // Serial.println("ONRESULT");
   std::string addrStr(reinterpret_cast<const char*>(advertisedDevice->getAddress().getNative()), 6);
+  // Serial.println(advertisedDevice->getAddress());
   if (alreadySeenAddresses.exists(addrStr)) {
     return;
   }

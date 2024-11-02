@@ -8,8 +8,16 @@
 
 class DiscoveredDevice {
 public:
-  DiscoveredDevice(NimBLEAdvertisedDevice* device) : 
-  name(device->getName()), address(device->getAddress()), manufacturerData(device->getManufacturerData()) {}
+  DiscoveredDevice(NimBLEAdvertisedDevice* device) :
+  name(device->getName()), address(device->getAddress()), manufacturerData(device->getManufacturerData()) {
+    Serial.println("DISCOVERED DEVICE");
+    Serial.print("name:");
+    Serial.println(name.c_str());
+    Serial.print("address:");
+    Serial.println(address);
+    Serial.print("manufacturerData:");
+    Serial.println(manufacturerData.c_str());
+  }
   const std::string& getName() const { return name; }
   const NimBLEAddress& getAddress() const { return address; }
   const std::string& getManufacturerData() const { return manufacturerData; }
@@ -47,7 +55,7 @@ protected:
   void clientCleanup();
   bool clientIsConnected();
   NimBLERemoteService* clientGetService(const NimBLEUUID uuid);
-  
+
   void setWeight(float newWeight);
   void log(std::string msgFormat, ...);
   std::string byteArrayToHexString(const uint8_t* byteArray, size_t length);
@@ -60,7 +68,7 @@ private:
   NimBLEClient* client = nullptr;
   DiscoveredDevice device;
   LogCallback logCallback;
-  WeightCallback weightCallback;
+  WeightCallback weightCallback = nullptr;
   bool weightCallbackOnlyChanges = false;
 };
 

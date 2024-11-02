@@ -66,6 +66,7 @@ bool AcaiaScales::connect() {
   }
   subscribeToNotifications();
   RemoteScales::setWeight(0.f);
+  RemoteScales::log("done connect!");
   return true;
 }
 
@@ -108,6 +109,7 @@ void AcaiaScales::notifyCallback(
   size_t length,
   bool isNotify
 ) {
+  // RemoteScales::log("ENTER CALLBACK");
   dataBuffer.insert(dataBuffer.end(), pData, pData + length);
   bool result = true;
   while (result) {
@@ -129,6 +131,7 @@ bool AcaiaScales::decodeAndHandleNotification() {
 
   uint8_t* payload = dataBuffer.data() + HEADER_LENGTH;
   size_t payloadLength = messageLength - (HEADER_LENGTH + CHECKSUM_LENGTH);
+  // RemoteScales::log("CALLBACK -- staying alive");
 
   auto checksumBytes = calculateChecksum(payload, payloadLength);
   if (checksumBytes.first != dataBuffer[messageLength - 2] || checksumBytes.second != dataBuffer[messageLength - 1]) {
@@ -141,8 +144,10 @@ bool AcaiaScales::decodeAndHandleNotification() {
   }
 
   AcaiaMessageType messageType = static_cast<AcaiaMessageType>(dataBuffer[2]);
+  // RemoteScales::log("CALLBACK -- staying alive 2!");
 
   if (messageType == AcaiaMessageType::EVENT) {
+    RemoteScales::log("Got event message: %s\n", RemoteScales::byteArrayToHexString(dataBuffer.data(), messageLength).c_str());
     handleScaleEventPayload(payload, payloadLength);
   }
   else if (messageType == AcaiaMessageType::STATUS) {
@@ -370,6 +375,8 @@ void AcaiaScales::subscribeToNotifications() {
     RemoteScales::log("Registering callback for command characteristic\n");
     commandCharacteristic->subscribe(true, callback);
   }
+  RemoteScales::log("Done subscribeToNotifications!\n");
+
 }
 
 void AcaiaScales::sendMessage(AcaiaMessageType msgType, const uint8_t* payload, size_t length, bool waitResponse) {
